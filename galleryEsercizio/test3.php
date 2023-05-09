@@ -5,7 +5,7 @@ require_once ("./aws/vendor/c.php");
 use Aws\S3\S3Client;
 
 
-function inserisciImmagineSuS3($image ){
+function inserisciImmagineSuS3($imageName , $imagePath){
     
     global $KEY, $SECRETKEY;
     $credentials= new Aws\Credentials\Credentials (
@@ -19,12 +19,13 @@ function inserisciImmagineSuS3($image ){
 
     $result = $s3->putObject([
                               'Bucket' => 'tommygallerybucket',
-                               'Key' => $image,
-                               'SourceFile' => 'pallablu.png',
+                               'Key' => $imageName,
+                               'SourceFile' => $imagePath,
                                 ]);
     
 
     }
-inserisciImmagineSuS3( 'pallablu.png' );
+
+inserisciImmagineSuS3( 'pallaarancio.png', '/var/www/html/galleryEsercizio/pallaarancio.png' );
 
 ?>

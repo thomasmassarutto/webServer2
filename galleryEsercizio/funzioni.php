@@ -23,7 +23,8 @@ function caricaDirectoryDaS3($bucketName) {
                                 'credentials'=> $credentials]);
     
     $elenco=$s3->ListObjects(array('Bucket' => $bucketName));    
-    if($elenco->get("Contents")){
+
+    if( $elenco->get("Contents") ){
         // cerco elementi
         foreach($elenco->get("Contents") as $object) {
             // aggiungo elemento ad array
@@ -33,8 +34,6 @@ function caricaDirectoryDaS3($bucketName) {
 
     return $elements;
     } 
-
-
 
 // Definisci una funzione che genera un link all'immagine con indice $indice_immagine e nome file $file
 function generaLinkImmagineDaS3($indice_immagine, $file, $bucketName) {
@@ -110,6 +109,27 @@ function generaLinktestualeDaS3($indice_immagine, $testo = ""){
     . "</a>";
 }
 
+// inserisce un immagine su s3
+function inserisciImmagineSuS3($imageName , $imagePath){
+    
+    global $KEY, $SECRETKEY;
+    $credentials= new Aws\Credentials\Credentials (
+        $KEY, 
+        $SECRETKEY); 
+    
+    // Configura il client S3
+    $s3= new Aws\S3\S3Client([  'version' => 'latest',
+                                'region' => 'eu-central-1', 
+                                'credentials'=> $credentials]);
+
+    $result = $s3->putObject([
+                              'Bucket' => 'tommygallerybucket',
+                               'Key' => $imageName,
+                               'SourceFile' => $imagePath,
+                                ]);
+                                return true;
+    }
+
 // Definisci una funzione che controlla se il nome file $nomefile rientra nei formati ammessi
 function controllaFormato($nomefile) {
     // Usa la variabile globale $formati_immagine per controllare se il nome file rientra nei formati ammessi
@@ -134,24 +154,4 @@ function controllaTipo($tipo) {
     return FALSE;
 }
 
-function inserisciImmagineSuS3($image, $percorso){
-    
-    global $KEY, $SECRETKEY;
-    $credentials= new Aws\Credentials\Credentials (
-        $KEY, 
-        $SECRETKEY); 
-    
-    // Configura il client S3
-    $s3= new Aws\S3\S3Client([  'version' => 'latest',
-                                'region' => 'eu-central-1', 
-                                'credentials'=> $credentials]);
-
-    $result = $s3->putObject([
-                              'Bucket' => 'tommygallerybucket',
-                               'Key' => $image,
-                               'SourceFile' => $percorso,
-                                ]);
-    
-
-    }
 ?>
