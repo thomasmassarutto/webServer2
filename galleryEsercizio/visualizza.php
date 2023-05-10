@@ -19,7 +19,7 @@ $lista_file= caricaDirectoryDaS3('tommygallerybucket');
     </head>
     <body>
         <?php
-        $url = generaLinkFirmato($lista_file[$immagine], 'tommygallerybucket');
+        $url = generaLinkFirmato($lista_file[$immagine], NOMEBUCKET);
         echo "\t<img src=\"$url\" />\n";
         ?>
 

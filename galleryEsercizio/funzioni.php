@@ -10,9 +10,9 @@ use Aws\Exception\AwsException;
 // Definisci una funzione che genera un array contenente i nomi dei file presenti nella directory
 // es: elements{[pippo.png], [pluto.png]}
 function caricaDirectoryDaS3($bucketName) {
-    // ""
+    // "importo" le key
     global $KEY, $SECRETKEY;
-    //array elements
+    //creo un array che conterra i nomi delle foto
     $contenuto= array();
     //API S3:
     // creo credenziali
@@ -22,45 +22,45 @@ function caricaDirectoryDaS3($bucketName) {
                                 'region' => 'eu-central-1', 
                                 'credentials'=> $credentials]);
 
-    // elenco di oggetti nel bucket, accedo con ->
-    // elenco: oggetto di tipo Aws\result
+    // elenco di oggetti nel bucket, accedo a $s3 con -> per 
+    // ricavare la lista degli oggetti al suo interno
+    // $elenco: contine $oggetti
     $elenco=$s3->ListObjects(array('Bucket' => $bucketName));    
-    // se elenco contiene oggetti
-    // accedo a campo 'contents' di oggetto elenco
-    // contents: array che contiene nomi di elementi
+    // accedo a campo 'contents' degli elementi ($oggetti) presenti in $elenco
+    // oggetti: elementi di $elenco
     $oggetti= $elenco->get('Contents');
     // per ogni membro di $oggetti lo rappresento temporaneamente con
     // $immagine e assegno il valore della chiave 'key'
     // all indice corrispondente di $contenuto
-        foreach( $oggetti as $immagine ) {
-            // aggiungo elemento ad array
-            $contenuto[] = $immagine['Key'];
-        } 
-
-    // ritorno array di nomi
-    return $contenuto;
+    foreach( $oggetti as $immagine ) {
+        // aggiungo elemento ad array
+        $contenuto[] = $immagine['Key'];
     } 
 
-    // genera un elemento HTML <a></a> contenente:
-    // link a visualizza *indice_immagine*
-    // miniatura lato client dell'immagine
-    function generaLinkImmagineDaS3($indice_immagine, $file, $nomeBucket) {
+    // ritorno array dei nomi delle immagini
+    return $contenuto;
+} 
 
-        global $KEY, $SECRETKEY;
-        $credentials= new Aws\Credentials\Credentials ($KEY, $SECRETKEY);
-        $s3= new Aws\S3\S3Client([  
-            'version' => 'latest',
-            'region' => 'eu-central-1', 
-            'credentials'=> $credentials
-        ]);
+// genera un elemento HTML <a></a> contenente:
+// link a visualizza.php?immagine=*indice_immagine*
+// miniatura lato client dell'immagine
+function generaImmagineDaS3($indiceImmagine, $nomeFile, $nomeBucket) {
 
-        // genero l'url prefirmato per visualizzare l'immagine, valido 20 mins
-        $urlImmagine = generaLinkFirmato($file, $nomeBucket);
-           
-        return  "<a href=\"visualizza.php?immagine=$indice_immagine\">" 
-                . "<img src=\"$urlImmagine\"  width=\"80\" height=\"60\"/>" // thumbanil generato lato client
-                . "</a>";
-   }
+    global $KEY, $SECRETKEY;
+    $credentials= new Aws\Credentials\Credentials ($KEY, $SECRETKEY);
+    $s3= new Aws\S3\S3Client([  
+        'version' => 'latest',
+        'region' => 'eu-central-1', 
+        'credentials'=> $credentials
+    ]);
+
+    // genera l'url prefirmato per visualizzare l'immagine, valido 20 mins
+    $urlImmagine = generaLinkFirmato($nomeFile, $nomeBucket);
+    //ritorno l'elemento completo   
+    return  "<a href=\"visualizza.php?immagine=$indiceImmagine\">" 
+            . "<img src=\"$urlImmagine\"  width=\"80\" height=\"60\"/>" // thumbanil generato lato client
+            . "</a>";
+}
    
 // genera il link firmato per accedere l'url per accedere all'immagoine nel bucket privato
 // occio che scade dopo 20 minuti
@@ -86,6 +86,7 @@ function generaLinkFirmato($file, $nomeBucket) {
     return $presignedUrl;
 
 }
+
 // genera un pezzo di codice html che porta a 
 // visualizza.php, *indiceimmagine*
 function generaLinktestualeDaS3($indice_immagine, $testo = ""){
@@ -113,8 +114,13 @@ function inserisciImmagineSuS3($imageName , $imagePath){
                                'Key' => $imageName,
                                'SourceFile' => $imagePath,
                                 ]);
-    // una volta inserito ritorno un valore Vero 
-    return true;
+    // controllo se l'oggetto è stato correttamente inserito
+    $exists = $s3->doesObjectExist('tommygallerybucket', $imageName);
+    if ($exists) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 // Definisci una funzione che controlla se il nome file $nomefile rientra nei formati ammessi
