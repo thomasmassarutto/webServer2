@@ -7,7 +7,7 @@ require_once ("./aws/vendor/c.php");
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
-function generaLinkImmagine($indice_immagine, $file, $nomeBucket) {
+function generaLinkImmagine($file, $nomeBucket) {
     global $KEY, $SECRETKEY;
     $credentials = new Aws\Credentials\Credentials($KEY, $SECRETKEY);
     $s3 = new Aws\S3\S3Client([
@@ -15,17 +15,24 @@ function generaLinkImmagine($indice_immagine, $file, $nomeBucket) {
         'region' => 'eu-central-1', 
         'credentials' => $credentials
     ]);
-    $urlS3 = $s3->getObjectUrl($nomeBucket, $file);
 
-    return "<a href=\"visualizza.php?immagine=" 
-        . $indice_immagine. "\">" 
-        . "<img src=\"" . $urlS3 . "\" width=\"80\" height=\"60\"/>"
-        . "</a>";
+    // Genera una URL firmata che scade dopo 20 minuti
+    $cmd = $s3->getCommand('GetObject', [
+            'Bucket' => $nomeBucket,
+            'Key' => $file
+    ]);
+
+    $request = $s3->createPresignedRequest($cmd, '+20 minutes');
+    $presignedUrl = (string)$request->getUri();
+        
+    return $presignedUrl;
 }
 
-$indice_immagine = 0;
-$file = 'craiyon_095917_deep_space_with_galaxies__stars__planets_or_solar_systems_in_the_background.png';
+$file = 'craiyon_095919_deep_space_with_galaxies__stars__planets_or_solar_systems_in_the_background.png';
 $nomeBucket = 'tommygallerybucket';
-$link = generaLinkImmagine($indice_immagine, $file, $nomeBucket);
-echo $link;
+$urlImmagine = generaLinkImmagine($file, $nomeBucket);
+echo $urlImmagine;
+echo "<img src=\"$urlImmagine\" width=\"80\" height=\"60\"/>";
+echo "<a href=\"$urlImmagine\">aaa</a>";
+
 ?>

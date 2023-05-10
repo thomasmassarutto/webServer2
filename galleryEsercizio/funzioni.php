@@ -41,24 +41,45 @@ function caricaDirectoryDaS3($bucketName) {
     return $contenuto;
     } 
 
-function generaLinkImmagine($indice_immagine, $file, $nomeBucket) {
+    function generaLinkImmagineDaS3($indice_immagine, $file, $nomeBucket) {
 
-     global $KEY, $SECRETKEY;
-     $contenuto= array();
-     $credentials= new Aws\Credentials\Credentials ($KEY, $SECRETKEY);
-     $s3= new Aws\S3\S3Client([  'version' => 'latest',
-                                 'region' => 'eu-central-1', 
-                                 'credentials'=> $credentials]);
+        global $KEY, $SECRETKEY;
+        $credentials= new Aws\Credentials\Credentials ($KEY, $SECRETKEY);
+        $s3= new Aws\S3\S3Client([  
+            'version' => 'latest',
+            'region' => 'eu-central-1', 
+            'credentials'=> $credentials
+        ]);
+   
+        $urlImmagine = generaLinkFirmato($file, $nomeBucket);
+           
+        return "<a href=\"visualizza.php?immagine=$indice_immagine\">" 
+        . "<img src=\"$urlImmagine\"  width=\"80\" height=\"60\"/>"
+        . "</a>";
+   }
+   
 
+function generaLinkFirmato($file, $nomeBucket) {
+    global $KEY, $SECRETKEY;
+    $credentials = new Aws\Credentials\Credentials($KEY, $SECRETKEY);
+    $s3 = new Aws\S3\S3Client([
+        'version' => 'latest',
+        'region' => 'eu-central-1', 
+        'credentials' => $credentials
+    ]);
 
-        return "<a href=\"visualizza.php?immagine=" 
-        . $indice_immagine. "\">" 
-        . "<img src=\"" $urlS3 "/" 
-        . $file . "\" width=\"80\" height= \"60\"/>"
-        . "</a>"; // thumbanil generato lato client
+    // Genera una URL firmata che scade dopo 20 minuti
+    $cmd = $s3->getCommand('GetObject', [
+            'Bucket' => $nomeBucket,
+            'Key' => $file
+    ]);
+
+    $request = $s3->createPresignedRequest($cmd, '+20 minutes');
+    $presignedUrl = (string)$request->getUri();
+        
+    return $presignedUrl;
+
 }
-
-
 // genera un pezzo di codice html che porta a 
 // visualizza.php, *indiceimmagine*
 function generaLinktestualeDaS3($indice_immagine, $testo = ""){

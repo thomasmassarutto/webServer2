@@ -11,12 +11,12 @@ require_once("funzioni.php");
 
         <?php
 
-        $lista_file= caricaDirectoryDaS3('tommygallerybucket');;
+        $lista_file= caricaDirectoryDaS3('tommygallerybucket');
 
         if(count($lista_file) > 0) {
 
             echo "<table>\n", "\t<tr>\n","\t\t<td>", generaLinkImmagineDaS3(0, $lista_file[0], 'tommygallerybucket'), "</td>\n";
-
+            
               for ($i = 1; $i < count($lista_file); $i++) {
 
                 if($i % $immagini_per_riga == 0)
