@@ -41,7 +41,7 @@ function caricaDirectoryDaS3($bucketName) {
     return $contenuto;
     } 
 
-// 
+// ciao   
 function generaLinkImmagineDaS3($indice_immagine, $file, $bucketName) {
     global $KEY, $SECRETKEY;
     $credentials= new Aws\Credentials\Credentials (
