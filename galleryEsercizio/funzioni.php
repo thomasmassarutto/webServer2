@@ -41,71 +41,26 @@ function caricaDirectoryDaS3($bucketName) {
     return $contenuto;
     } 
 
-// ciao   
-function generaLinkImmagineDaS3($indice_immagine, $file, $bucketName) {
-    global $KEY, $SECRETKEY;
-    $credentials= new Aws\Credentials\Credentials (
-        $KEY, 
-        $SECRETKEY); 
-    $s3= new Aws\S3\S3Client([  'version' => 'latest',
-                                'region' => 'eu-central-1', 
-                                'credentials'=> $credentials]);
-    
-    // Genera l'URI S3 per l'immagine specificata
-    $s3_uri = 's3://' . $bucketName . '/' . $file;
-    
-    // Recupera l'URL firmato per l'URI S3 dell'immagine
-    $signed_url = $s3->createPresignedRequest(
-        $s3->getCommand('GetObject', [
-            'Bucket' => $bucketName,
-            'Key' => $file,
-        ]),
-        '+30 second' // Durata del link firmato
-    )->getUri()->__toString();
-    
-    echo 
-    "<a href=\"visualizza.php?immagine=" 
-    . $indice_immagine. "\">" 
-    . "<img src=\"" .$signed_url. "\" 
-            width=\"80\" height= \"60\"/>" //thumbanil
-    . "</a>";
+function generaLinkImmagine($indice_immagine, $file, $nomeBucket) {
+
+     global $KEY, $SECRETKEY;
+     $contenuto= array();
+     $credentials= new Aws\Credentials\Credentials ($KEY, $SECRETKEY);
+     $s3= new Aws\S3\S3Client([  'version' => 'latest',
+                                 'region' => 'eu-central-1', 
+                                 'credentials'=> $credentials]);
+
+
+        return "<a href=\"visualizza.php?immagine=" 
+        . $indice_immagine. "\">" 
+        . "<img src=\"" $urlS3 "/" 
+        . $file . "\" width=\"80\" height= \"60\"/>"
+        . "</a>"; // thumbanil generato lato client
 }
 
-
-function generaImmagineDaS3($file, $bucketName) {
-    global $KEY, $SECRETKEY;
-
-    // Configura le credenziali per l'autenticazione
-    $credentials= new Aws\Credentials\Credentials (
-        $KEY, 
-        $SECRETKEY
-    ); 
-
-    // Configura il client S3
-    $s3= new Aws\S3\S3Client([
-        'version' => 'latest',
-        'region' => 'eu-central-1', 
-        'credentials'=> $credentials
-    ]);
-
-    // Genera l'URI S3 per l'immagine specificata
-    $s3_uri = 's3://' . $bucketName . '/' . $file;
-
-    // Recupera l'URL firmato per l'URI S3 dell'immagine
-    $signed_url = $s3->createPresignedRequest(
-        $s3->getCommand('GetObject', [
-            'Bucket' => $bucketName,
-            'Key' => $file,
-        ]),
-        '+30 minutes' // Durata del link firmato
-    )->getUri()->__toString();
-
-    // Restituisci l'URL all'immagine con la firma temporanea
-    return $signed_url;
-}
 
 // genera un pezzo di codice html che porta a 
-// visualizza.php, *indiceimmagina*
+// visualizza.php, *indiceimmagine*
 function generaLinktestualeDaS3($indice_immagine, $testo = ""){
 
     return "<a href=\"visualizza.php?immagine=" 
@@ -121,19 +76,19 @@ function inserisciImmagineSuS3($imageName , $imagePath){
     $credentials= new Aws\Credentials\Credentials (
         $KEY, 
         $SECRETKEY); 
-    
-    // Configura il client S3
+
     $s3= new Aws\S3\S3Client([  'version' => 'latest',
                                 'region' => 'eu-central-1', 
                                 'credentials'=> $credentials]);
-
+    // utilizzo putObject per inserire un oggetto nel bucket
     $result = $s3->putObject([
                               'Bucket' => 'tommygallerybucket',
                                'Key' => $imageName,
                                'SourceFile' => $imagePath,
                                 ]);
-                                return true;
-    }
+    // una volta inserito ritorno un valore Vero 
+    return true;
+}
 
 // Definisci una funzione che controlla se il nome file $nomefile rientra nei formati ammessi
 function controllaFormato($nomefile) {
