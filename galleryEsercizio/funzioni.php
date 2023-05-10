@@ -10,7 +10,7 @@ use Aws\Exception\AwsException;
 // Definisci una funzione che genera un array contenente i nomi dei file presenti nella directory
 // es: elements{[pippo.png], [pluto.png]}
 function caricaDirectoryDaS3($bucketName) {
-    // ""
+    
     global $KEY, $SECRETKEY;
     //array elements
     $contenuto= array();
@@ -39,14 +39,15 @@ function caricaDirectoryDaS3($bucketName) {
 
     // ritorno array di nomi
     return $contenuto;
-    } 
+} 
 
-// 
 function generaLinkImmagineDaS3($indice_immagine, $file, $bucketName) {
     global $KEY, $SECRETKEY;
     $credentials= new Aws\Credentials\Credentials (
         $KEY, 
         $SECRETKEY); 
+    
+    // Configura il client S3
     $s3= new Aws\S3\S3Client([  'version' => 'latest',
                                 'region' => 'eu-central-1', 
                                 'credentials'=> $credentials]);
@@ -133,7 +134,7 @@ function inserisciImmagineSuS3($imageName , $imagePath){
                                'SourceFile' => $imagePath,
                                 ]);
                                 return true;
-    }
+}
 
 // Definisci una funzione che controlla se il nome file $nomefile rientra nei formati ammessi
 function controllaFormato($nomefile) {
