@@ -41,6 +41,9 @@ function caricaDirectoryDaS3($bucketName) {
     return $contenuto;
     } 
 
+    // genera un elemento HTML <a></a> contenente:
+    // link a visualizza *indice_immagine*
+    // miniatura lato client dell'immagine
     function generaLinkImmagineDaS3($indice_immagine, $file, $nomeBucket) {
 
         global $KEY, $SECRETKEY;
@@ -50,15 +53,18 @@ function caricaDirectoryDaS3($bucketName) {
             'region' => 'eu-central-1', 
             'credentials'=> $credentials
         ]);
-   
+
+        // genero l'url prefirmato per visualizzare l'immagine, valido 20 mins
         $urlImmagine = generaLinkFirmato($file, $nomeBucket);
            
-        return "<a href=\"visualizza.php?immagine=$indice_immagine\">" 
-        . "<img src=\"$urlImmagine\"  width=\"80\" height=\"60\"/>"
-        . "</a>";
+        return  "<a href=\"visualizza.php?immagine=$indice_immagine\">" 
+                . "<img src=\"$urlImmagine\"  width=\"80\" height=\"60\"/>" // thumbanil generato lato client
+                . "</a>";
    }
    
-
+// genera il link firmato per accedere l'url per accedere all'immagoine nel bucket privato
+// occio che scade dopo 20 minuti
+// https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/s3-presigned-url.html
 function generaLinkFirmato($file, $nomeBucket) {
     global $KEY, $SECRETKEY;
     $credentials = new Aws\Credentials\Credentials($KEY, $SECRETKEY);
