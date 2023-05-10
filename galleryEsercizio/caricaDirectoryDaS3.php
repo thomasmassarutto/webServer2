@@ -5,16 +5,15 @@ use Aws\S3\S3Client;
 
 caricaDirectoryDaS3('tommygallerybucket');
 
-// Definisci una funzione che genera un array contenente i file presenti nella directory
+// Definisci una funzione che genera un array contenente i nomi dei file presenti nella directory
+// es: elements{[pippo.png], [pluto.png]}
 function caricaDirectoryDaS3($bucketName) {
-
-
+    // le mie key
     global $KEY, $SECRETKEY;
-    
-    //preliminari 
 
-    //array elements
+    //creo array che conterra i nomi
     $elements= Array();
+    
     // credenziali
     $credentials= new Aws\Credentials\Credentials ($KEY, $SECRETKEY); 
     

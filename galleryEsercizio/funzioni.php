@@ -7,35 +7,40 @@ require_once ("./aws/vendor/c.php");
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
-
-// Definisci una funzione che genera un array contenente i file presenti nella directory
+// Definisci una funzione che genera un array contenente i nomi dei file presenti nella directory
+// es: elements{[pippo.png], [pluto.png]}
 function caricaDirectoryDaS3($bucketName) {
-
-    global $KEY, $SECRETKEY;
-
-    //array elements
-    $elements= Array();
-    // credenziali
-    $credentials= new Aws\Credentials\Credentials ($KEY, $SECRETKEY); 
     
+    global $KEY, $SECRETKEY;
+    //array elements
+    $contenuto= array();
+    //API S3:
+    // creo credenziali
+    $credentials= new Aws\Credentials\Credentials ($KEY, $SECRETKEY); 
+    // creo istanza s3
     $s3= new Aws\S3\S3Client([  'version' => 'latest',
                                 'region' => 'eu-central-1', 
                                 'credentials'=> $credentials]);
-    
+
+    // elenco di oggetti nel bucket, accedo con ->
+    // elenco: oggetto di tipo Aws\result
     $elenco=$s3->ListObjects(array('Bucket' => $bucketName));    
-
-    if( $elenco->get("Contents") ){
-        // cerco elementi
-        foreach($elenco->get("Contents") as $object) {
+    // se elenco contiene oggetti
+    // accedo a campo 'contents' di oggetto elenco
+    // contents: array che contiene nomi di elementi
+    $oggetti= $elenco->get('Contents');
+    // per ogni membro di $oggetti lo rappresento temporaneamente con
+    // $immagine e assegno il valore della chiave 'key'
+    // all indice corrispondente di $contenuto
+        foreach( $oggetti as $immagine ) {
             // aggiungo elemento ad array
-            $elements[] = $object['Key'];
-        }
-    }
+            $contenuto[] = $immagine['Key'];
+        } 
 
-    return $elements;
-    } 
+    // ritorno array di nomi
+    return $contenuto;
+} 
 
-// Definisci una funzione che genera un link all'immagine con indice $indice_immagine e nome file $file
 function generaLinkImmagineDaS3($indice_immagine, $file, $bucketName) {
     global $KEY, $SECRETKEY;
     $credentials= new Aws\Credentials\Credentials (
@@ -100,7 +105,8 @@ function generaImmagineDaS3($file, $bucketName) {
     return $signed_url;
 }
 
-
+// genera un pezzo di codice html che porta a 
+// visualizza.php, *indiceimmagina*
 function generaLinktestualeDaS3($indice_immagine, $testo = ""){
 
     return "<a href=\"visualizza.php?immagine=" 
@@ -128,7 +134,7 @@ function inserisciImmagineSuS3($imageName , $imagePath){
                                'SourceFile' => $imagePath,
                                 ]);
                                 return true;
-    }
+}
 
 // Definisci una funzione che controlla se il nome file $nomefile rientra nei formati ammessi
 function controllaFormato($nomefile) {
