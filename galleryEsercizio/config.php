@@ -1,6 +1,5 @@
 <?php
 // dati di configurazione
-//define("DIR_IMMAGINI", "./immagini");
 define("NOMEBUCKET", "tommygallerybucket");
 
     $immagini_per_riga= 5;
