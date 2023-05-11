@@ -1,14 +1,14 @@
 <?php 
 // Includi il file di configurazione
 require_once("config.php");
-require_once './aws/vendor/autoload.php';
+require_once ("./aws/vendor/autoload.php");
 require_once ("./aws/vendor/c.php");
 
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
 // Definisci una funzione che genera un array contenente i nomi dei file presenti nella directory
-// es: elements{[pippo.png], [pluto.png]}
+// es: $contenuto{[pippo.png], [pluto.png]}
 function caricaDirectoryDaS3($bucketName) {
     // "importo" le key
     global $KEY, $SECRETKEY;
@@ -97,7 +97,7 @@ function generaLinktestualeDaS3($indice_immagine, $testo = ""){
     . "</a>";
 }
 
-// inserisce un immagine su s3
+// inserisce un immagine su bucket
 function inserisciImmagineSuS3($imageName , $imagePath){
     
     global $KEY, $SECRETKEY;
@@ -116,6 +116,7 @@ function inserisciImmagineSuS3($imageName , $imagePath){
                                 ]);
     // controllo se l'oggetto è stato correttamente inserito
     $exists = $s3->doesObjectExist('tommygallerybucket', $imageName);
+    
     if ($exists) {
         return true;
     } else {
