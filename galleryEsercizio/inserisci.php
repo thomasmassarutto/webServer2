@@ -24,7 +24,7 @@
     }
 
     // sposta il file nella directory delle immagini
-    if (  inserisciImmagineSuS3($nome , $tmp_nome) ) {
+    if (  inserisciImmagineSuS3($nome , $tmp_nome, NOMEBUCKET) ) {
         // mostra un messaggio di conferma con un link all'indice del sito
         echo "<p>Inserimento effettuato, torna all'<a href=\"indice.php\">indice</a></p>\n";
     } else {

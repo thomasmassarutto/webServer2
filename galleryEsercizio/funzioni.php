@@ -98,7 +98,7 @@ function generaLinktestualeDaS3($indice_immagine, $testo = ""){
 }
 
 // inserisce un immagine su bucket
-function inserisciImmagineSuS3($imageName , $imagePath){
+function inserisciImmagineSuS3($imageName, $imagePath, $bucketName){
     
     global $KEY, $SECRETKEY;
     $credentials= new Aws\Credentials\Credentials (
@@ -110,17 +110,17 @@ function inserisciImmagineSuS3($imageName , $imagePath){
                                 'credentials'=> $credentials]);
     // utilizzo putObject per inserire un oggetto nel bucket
     $result = $s3->putObject([
-                              'Bucket' => 'tommygallerybucket',
+                              'Bucket' => $bucketName,
                                'Key' => $imageName,
                                'SourceFile' => $imagePath,
                                 ]);
     // controllo se l'oggetto è stato correttamente inserito
-    $exists = $s3->doesObjectExist('tommygallerybucket', $imageName);
+    $exists = $s3->doesObjectExist($bucketName, $imageName);
     
     if ($exists) {
-        return true;
+        return TRUE;
     } else {
-        return false;
+        return FALSE;
     }
 }
 
