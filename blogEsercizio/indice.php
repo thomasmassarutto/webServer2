@@ -24,12 +24,13 @@ require("funzioni.php");
 
         <div id="blog">
             <?php 
-            $contenuto = leggi (1, 5);
+            $contenuto = leggi (numeroPost(), $POSTPERPAGINA);
+
             if(count($contenuto) > 0) {
                 foreach($contenuto as $post) {
-                    echo "<div class=\"post\">\n<h3>", $post[2], "</h3>\n"; 
-                    echo "<p>", $post[3], "</p>\n";
-                    echo "<p class=\"info\">Pubblicato il: ", $post[1]," da ", $UTENTE, "</p>\n</div>\n";
+                    echo "<div class=\"post\">\n<h3>", $post['Titolo']['S'], "</h3>\n"; 
+                    echo "<p>", $post['Testo']['S'], "</p>\n";
+                    echo "<p class=\"info\">Pubblicato il: ", $post['DataPubblicazione']['S']," da ", $UTENTE, "</p>\n</div>\n";
                     }
                 }
             ?>

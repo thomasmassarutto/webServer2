@@ -1,6 +1,8 @@
 <?php
 require_once("config.php"); 
 require_once("funzioni.php");
+
+
 ?>
 <html>
     <head>
@@ -19,21 +21,24 @@ require_once("funzioni.php");
             <hr/>
             Titolo: <input type="text" name="titolo" size="50"/> <br/>
             Contenuto: <br/>
-            <textarea name="contenuto" rows="10" cols="60"> 
-            </textarea> 
+            <textarea name="contenuto" rows="10" cols="60"> </textarea> 
             <br/>
             <input type="submit" value="Pubblica"/>
-    </form>
+            </form>
 
         <?php
             } else { // la pagina è stata chiamata con il POST
                 if( !utenteValido($_POST["utente"], $_POST["password"])) { 
-        ?> 
+        ?>
                     <h2>Errore</h2>
-                    <p>Non sei autorizzato all’inserimento. Torna al <a href="indice.php">blog</a>.</p>
-        <?php 
+                    <p>Non sei autorizzato all’inserimento. Torna al <a href=indice.php>Blog</a>.</p>
+        
+        <?php
+
                 } else {
+
                     registra($_POST["titolo"], $_POST["contenuto"]);
+
                     echo "<p>Il post &egrave; stato pubblicato. Torna al <a href=\"indice.php\">Blog</a>.</p>";
                 }
             }
