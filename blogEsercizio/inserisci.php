@@ -11,7 +11,7 @@ require_once("funzioni.php");
     </head>
     
     <body>
-        <?php if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        <?php if ($_SERVER["REQUEST_METHOD"] == "GET") {// quando la pagina è chiamat col GET
         ?>
         <!--FORM-->
         <h1>Invia un post</h1>
@@ -27,7 +27,7 @@ require_once("funzioni.php");
             </form>
 
         <?php
-            } else { // la pagina è stata chiamata con il POST
+            } else { // quando la pagina è stata chiamata con il POST
                 if( !utenteValido($_POST["utente"], $_POST["password"])) { 
         ?>
                     <h2>Errore</h2>

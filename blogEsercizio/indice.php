@@ -24,7 +24,8 @@ require("funzioni.php");
 
         <div id="blog">
             <?php 
-            $contenuto = leggi (numeroPost(), $POSTPERPAGINA);
+            // assegno a $contenuto gli utilmi $POSTPERPAGINA post fatti 
+            $contenuto = leggi(numeroPost(), $POSTPERPAGINA);// 
 
             if(count($contenuto) > 0) {
                 foreach($contenuto as $post) {

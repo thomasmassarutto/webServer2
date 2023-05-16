@@ -23,15 +23,15 @@ require("funzioni.php");
 
         <?php
         $numero = numeroPost();
-        $pagine = ceil($numero / $POSTPERPAGINA); # arrotondamentro al sup
+        $pagine = ceil($numero / $POSTPERPAGINA); // arrotondamentro al sup
         if (!isset($_GET["pagina"]))
             $pagina = 1;
         else
             $pagina = $_GET["pagina"];
-
+            // stampo i post $POSTPERPAGINA alla volta, se ce ne sono doi piu genero nuova pagina
             $contenuto = leggi( numeroPost() - (($pagina -1) * $POSTPERPAGINA), 
                                 $POSTPERPAGINA);
-
+            // stampo i $contenuto: array dei post
             if (count($contenuto) > 0) {
                 foreach ($contenuto as $post) {
                     echo "<div class=\"post\">\n<h3>", $post['Titolo']['S'], "</h3>\n";
